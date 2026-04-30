@@ -40,10 +40,12 @@ body::after {
 .canvas-area--embedded {
   min-height: 100dvh !important;
   height: 100dvh !important;
-  padding: 0 !important;
 }
 
 .canvas-area--embedded {
+  padding-top: 0 !important;
+  padding-right: 0 !important;
+  padding-left: 0 !important;
   place-items: center !important;
 }
 
