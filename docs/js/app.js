@@ -120,7 +120,17 @@ function installViewportStabilityGuards() {
   }, true);
   document.addEventListener('touchmove', (event) => {
     const target = event.target;
-    if (target instanceof HTMLElement && target.closest('input[type="range"], textarea, select, .screen-area--record')) return;
+    if (target instanceof HTMLElement && target.closest([
+      'input[type="range"]',
+      'textarea',
+      'select',
+      '.screen-area--home',
+      '.screen-area--timeline',
+      '.screen-area--search',
+      '.screen-area--profile',
+      '.screen-area--post',
+      '.screen-area--record',
+    ].join(', '))) return;
     event.preventDefault();
   }, { passive: false });
 
@@ -6827,6 +6837,64 @@ async function applyRecordPhotoFile(file) {
   renderScreen();
 }
 
+async function captureRecordPageImage() {
+  const page = document.querySelector('.record-generated-page');
+  if (!page) return '';
+  try {
+    return await captureComposeFrameToDataUrl(page);
+  } catch (error) {
+    console.warn('Record page capture failed.', error);
+    return '';
+  }
+}
+
+async function saveRecordGeneratedPage({ publish = false } = {}) {
+  const selectedIds = uiState.recordSelectedIds || [];
+  if (selectedIds.length !== 3) return false;
+  const imageData = await captureRecordPageImage();
+  if (!imageData) return false;
+  const profileName = String(getState().profile?.name || 'you').trim() || 'you';
+  const title = 'A Day in Tokyo';
+
+  if (publish) {
+    addPost({
+      authorName: profileName,
+      caption: '今日の思い出が1ページになりました',
+      imageData,
+      fixedTags: ['record'],
+      freeTags: [],
+      composeData: {
+        source: 'record',
+        recordMemoryIds: selectedIds.slice(0, 3),
+        title,
+      },
+    });
+    uiState.screen = 'timeline';
+    uiState.timelineTab = 'recommended';
+  } else {
+    upsertDraft({
+      title,
+      imageData,
+      composeData: {
+        source: 'record',
+        recordMemoryIds: selectedIds.slice(0, 3),
+        title,
+      },
+    });
+    uiState.screen = 'profile';
+    uiState.profileAuthor = null;
+    uiState.profileSection = 'drafts';
+    uiState.profileExpanded = true;
+  }
+
+  uiState.recordStage = 'home';
+  uiState.recordDraft = null;
+  uiState.recordEditingId = null;
+  uiState.recordSelectedIds = [];
+  render();
+  return true;
+}
+
 function bindRecordEvents() {
   document.querySelectorAll('[data-record-stage]').forEach((button) => {
     button.addEventListener('click', () => {
@@ -6927,6 +6995,30 @@ function bindRecordEvents() {
     if ((uiState.recordSelectedIds || []).length !== 3) return;
     uiState.recordStage = 'complete';
     renderScreen();
+  });
+
+  document.querySelector('[data-record-save-page]')?.addEventListener('click', async (event) => {
+    const button = event.currentTarget;
+    const previousText = button.textContent;
+    button.disabled = true;
+    button.textContent = '保存中';
+    const saved = await saveRecordGeneratedPage({ publish: false });
+    if (!saved) {
+      button.disabled = false;
+      button.textContent = previousText || '保存する';
+    }
+  });
+
+  document.querySelector('[data-record-post-page]')?.addEventListener('click', async (event) => {
+    const button = event.currentTarget;
+    const previousText = button.textContent;
+    button.disabled = true;
+    button.textContent = '投稿中';
+    const posted = await saveRecordGeneratedPage({ publish: true });
+    if (!posted) {
+      button.disabled = false;
+      button.textContent = previousText || '投稿する';
+    }
   });
 }
 

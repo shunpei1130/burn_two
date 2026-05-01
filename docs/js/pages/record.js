@@ -114,7 +114,7 @@ function renderRecordCamera(draft) {
         ${hasPhoto
           ? `<img src="${draft.imageData}" alt="" />`
           : `<div class="record-camera-placeholder">${getIcon('camera')}<p>シャッターを押すと写真がここに表示されます。</p></div>`}
-        <div class="record-time-pill">${getIcon('clock')} <strong>${escapeHtml(draft?.time || '--:--')}</strong> 自動記録</div>
+        <div class="record-time-pill">${getIcon('clock')} <strong>${escapeHtml(draft?.time || '--:--')}</strong> <span>自動記録</span></div>
       </div>
 
       <section class="record-capture-sheet ${hasPhoto ? 'is-expanded' : ''}">
@@ -244,8 +244,8 @@ function renderRecordComplete(memories) {
       </div>
       ${renderGeneratedPagePreview(memories)}
       <div class="record-complete-actions">
-        <button type="button">${getIcon('download')}<span>保存する</span></button>
-        <button type="button">${getIcon('camera')}<span>投稿する</span></button>
+        <button type="button" data-record-save-page>${getIcon('download')}<span>保存する</span></button>
+        <button type="button" data-record-post-page>${getIcon('camera')}<span>投稿する</span></button>
         <button type="button">${getIcon('bookOpen')}<span>雑誌化する</span></button>
         <button type="button">${getIcon('document')}<span>PDF</span></button>
       </div>
