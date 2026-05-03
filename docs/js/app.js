@@ -6927,13 +6927,20 @@ function drawCenteredText(ctx, text, x, y, maxWidth) {
   ctx.fillText(text, x, y, maxWidth);
 }
 
+const RECORD_EXPORT_PREVIEW_WIDTH = 390;
+
+function recordExportScale(pageWidth) {
+  return pageWidth / RECORD_EXPORT_PREVIEW_WIDTH;
+}
+
 function drawRecordTime(ctx, time, rect) {
-  const y = rect.y - 22;
+  const scale = recordExportScale(1414);
+  const y = rect.y - 12.8 * scale;
   const centerX = rect.x + rect.width / 2;
-  const lineGap = 58;
+  const lineGap = 58 * scale;
   ctx.save();
   ctx.strokeStyle = 'rgba(48, 38, 35, 0.28)';
-  ctx.lineWidth = 1.4;
+  ctx.lineWidth = 1.4 * scale;
   ctx.beginPath();
   ctx.moveTo(rect.x, y);
   ctx.lineTo(centerX - lineGap, y);
@@ -6941,8 +6948,8 @@ function drawRecordTime(ctx, time, rect) {
   ctx.lineTo(rect.x + rect.width, y);
   ctx.stroke();
   ctx.fillStyle = '#302623';
-  ctx.font = '44px "Cormorant Garamond", "Times New Roman", serif';
-  drawCenteredText(ctx, String(time || ''), centerX, y - 1, lineGap * 1.7);
+  ctx.font = `${18.4 * scale}px "Cormorant Garamond", "Times New Roman", serif`;
+  drawCenteredText(ctx, String(time || ''), centerX, y - 1 * scale, lineGap * 1.7);
   ctx.restore();
 }
 
@@ -6984,6 +6991,7 @@ function wrapCanvasText(ctx, text, maxWidth) {
 }
 
 function drawRecordTextSlot(ctx, memory, rect) {
+  const scale = recordExportScale(1414);
   const padding = Math.min(rect.width, rect.height) * 0.055;
   const left = rect.x + padding;
   const top = rect.y + padding;
@@ -6994,23 +7002,23 @@ function drawRecordTextSlot(ctx, memory, rect) {
   ctx.save();
   ctx.textAlign = 'left';
   ctx.textBaseline = 'top';
-  drawLocationPin(ctx, left + 20, top + 31, 40);
+  drawLocationPin(ctx, left + 9 * scale, top + 13 * scale, 18 * scale);
   ctx.fillStyle = '#6f4d48';
-  ctx.font = '600 42px "Shippori Mincho", "Noto Serif JP", serif';
-  ctx.fillText(place, left + 56, top + 2, maxWidth - 56);
-  const underlineWidth = Math.min(maxWidth, Math.max(118, ctx.measureText(place).width + 52));
+  ctx.font = `600 ${17.92 * scale}px "Shippori Mincho", "Noto Serif JP", serif`;
+  ctx.fillText(place, left + 24 * scale, top, maxWidth - 24 * scale);
+  const underlineWidth = Math.min(maxWidth, Math.max(118 * scale, ctx.measureText(place).width + 24 * scale));
   ctx.strokeStyle = 'rgba(48, 38, 35, 0.24)';
-  ctx.lineWidth = 1.4;
+  ctx.lineWidth = 1.4 * scale;
   ctx.beginPath();
-  ctx.moveTo(left, top + 70);
-  ctx.lineTo(left + underlineWidth, top + 70);
+  ctx.moveTo(left, top + 30 * scale);
+  ctx.lineTo(left + underlineWidth, top + 30 * scale);
   ctx.stroke();
 
   ctx.fillStyle = '#4f4440';
-  ctx.font = '32px "Shippori Mincho", "Noto Serif JP", serif';
+  ctx.font = `${13.12 * scale}px "Shippori Mincho", "Noto Serif JP", serif`;
   const memoLines = wrapCanvasText(ctx, memo, maxWidth);
-  const lineHeight = 50;
-  let y = top + 106;
+  const lineHeight = 22.3 * scale;
+  let y = top + 43 * scale;
   const maxY = rect.y + rect.height - padding;
   memoLines.forEach((line) => {
     if (y + lineHeight <= maxY) {
