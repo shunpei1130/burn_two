@@ -112,6 +112,11 @@ function normalizeRecordMemory(memory) {
     time: memory.time || new Date().toTimeString().slice(0, 5),
     place: memory.place || '',
     memo: memory.memo || '',
+    pageCrop: {
+      x: Math.min(1, Math.max(0, Number(memory.pageCrop?.x) || 0.5)),
+      y: Math.min(1, Math.max(0, Number(memory.pageCrop?.y) || 0.5)),
+      zoom: Math.max(1, Number(memory.pageCrop?.zoom) || 1),
+    },
     createdAt: memory.createdAt || new Date().toISOString(),
   };
 }
@@ -252,6 +257,13 @@ export function updateRecordMemory(memoryId, updates) {
   if (!memory) return null;
   memory.place = String(updates?.place ?? memory.place ?? '').trim();
   memory.memo = String(updates?.memo ?? memory.memo ?? '').trim();
+  if (updates?.pageCrop && typeof updates.pageCrop === 'object') {
+    memory.pageCrop = {
+      x: Math.min(1, Math.max(0, Number(updates.pageCrop.x) || 0.5)),
+      y: Math.min(1, Math.max(0, Number(updates.pageCrop.y) || 0.5)),
+      zoom: Math.max(1, Number(updates.pageCrop.zoom) || 1),
+    };
+  }
   memory.updatedAt = new Date().toISOString();
   commit(next);
   return normalizeRecordMemory(memory);

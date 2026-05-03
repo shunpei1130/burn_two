@@ -532,6 +532,13 @@
   display: none;
 }
 
+.record-camera-preview.is-camera-unavailable .record-camera-placeholder p::after {
+  display: block;
+  margin-top: 6px;
+  content: "下のボタンからカメラまたはアルバムを開けます";
+  font-size: 0.76rem;
+}
+
 .record-filter-bar {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -695,10 +702,36 @@
   align-items: center;
 }
 
+.record-photo-download {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 12px;
+  border: 1px solid rgba(182, 106, 98, 0.18);
+  border-radius: 999px;
+  color: #8e5a54;
+  background: rgba(255, 255, 255, 0.72);
+}
+
 .record-secondary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   border: 1px solid rgba(93, 73, 66, 0.2);
   color: #7d514c;
   background: rgba(255, 255, 255, 0.76);
+}
+
+.record-file-button {
+  cursor: pointer;
+}
+
+.record-file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .record-shutter {
@@ -830,7 +863,7 @@
 .record-select-card__order {
   position: absolute;
   right: 12px;
-  bottom: 10px;
+  top: 10px;
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -1337,6 +1370,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  clip-path: inset(0);
 }
 
 .record-template-slot--image figcaption {

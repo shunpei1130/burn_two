@@ -6903,20 +6903,31 @@ function stopRecordCameraStream() {
 
 async function startRecordCameraStream() {
   const video = document.querySelector('[data-record-camera-video]');
-  if (!video || !navigator.mediaDevices?.getUserMedia) return;
+  if (!video || !navigator.mediaDevices?.getUserMedia) {
+    video?.closest('.record-camera-preview')?.classList.add('is-camera-unavailable');
+    return;
+  }
   const facingMode = uiState.recordDraft?.facingMode === 'user' ? 'user' : 'environment';
   stopRecordCameraStream();
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: { ideal: facingMode } },
-      audio: false,
-    });
+    let stream = null;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: facingMode } },
+        audio: false,
+      });
+    } catch (constraintError) {
+      stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+    }
     recordCameraStream = stream;
+    video.setAttribute('playsinline', '');
+    video.muted = true;
     video.srcObject = stream;
-    await video.play();
+    await video.play().catch(() => {});
     video.closest('.record-camera-preview')?.classList.add('is-live');
   } catch (error) {
     console.warn('Record camera stream failed.', error);
+    video.closest('.record-camera-preview')?.classList.add('is-camera-unavailable');
   }
 }
 
@@ -7125,14 +7136,31 @@ function loadCanvasImage(src) {
 
 function drawCoverImage(ctx, image, rect) {
   if (!image) return;
+  drawCroppedCoverImage(ctx, image, rect);
+}
+
+function getRecordPageCrop(memory) {
+  return {
+    x: Math.min(1, Math.max(0, Number(memory?.pageCrop?.x) || 0.5)),
+    y: Math.min(1, Math.max(0, Number(memory?.pageCrop?.y) || 0.5)),
+    zoom: Math.max(1, Number(memory?.pageCrop?.zoom) || 1),
+  };
+}
+
+function drawCroppedCoverImage(ctx, image, rect, crop = { x: 0.5, y: 0.5, zoom: 1 }) {
+  if (!image) return;
   const sourceWidth = image.naturalWidth || image.width;
   const sourceHeight = image.naturalHeight || image.height;
   if (!sourceWidth || !sourceHeight) return;
-  const scale = Math.max(rect.width / sourceWidth, rect.height / sourceHeight);
+  const scale = Math.max(rect.width / sourceWidth, rect.height / sourceHeight) * Math.max(1, Number(crop?.zoom) || 1);
   const drawWidth = sourceWidth * scale;
   const drawHeight = sourceHeight * scale;
-  const drawX = rect.x + (rect.width - drawWidth) / 2;
-  const drawY = rect.y + (rect.height - drawHeight) / 2;
+  const overflowX = Math.max(0, drawWidth - rect.width);
+  const overflowY = Math.max(0, drawHeight - rect.height);
+  const focusX = Math.min(1, Math.max(0, Number(crop?.x) || 0.5));
+  const focusY = Math.min(1, Math.max(0, Number(crop?.y) || 0.5));
+  const drawX = rect.x - overflowX * focusX;
+  const drawY = rect.y - overflowY * focusY;
   ctx.save();
   ctx.beginPath();
   ctx.rect(rect.x, rect.y, rect.width, rect.height);
@@ -7340,7 +7368,7 @@ async function renderRecordPageToCanvasDataUrl() {
       return;
     }
     drawRecordTime(ctx, memories[index]?.time, rect);
-    drawCoverImage(ctx, images[index], rect);
+    drawCroppedCoverImage(ctx, images[index], rect, getRecordPageCrop(memories[index]));
   });
 
   template.textSlots.forEach((slot, index) => {
@@ -7362,6 +7390,11 @@ async function captureRecordPageImage() {
 function getRecordPageImageFilename() {
   const dateKey = uiState.recordDate || new Date().toISOString().slice(0, 10);
   return `memory-page-${dateKey.replaceAll('-', '')}.png`;
+}
+
+function getRecordPhotoFilename() {
+  const date = new Date();
+  return `memory-photo-${formatDateKey(date.getFullYear(), date.getMonth() + 1, date.getDate()).replaceAll('-', '')}-${date.toTimeString().slice(0, 5).replace(':', '')}.jpg`;
 }
 
 function isMobileLikeDevice() {
@@ -7412,6 +7445,28 @@ async function saveRecordPageImageToDevice() {
     }
   }
 
+  downloadBlobFile(blob, filename);
+  return true;
+}
+
+async function saveRecordPhotoToDevice() {
+  const imageData = uiState.recordDraft?.imageData || '';
+  const blob = composeDataUrlToBlob(imageData);
+  if (!blob) return false;
+  const filename = getRecordPhotoFilename();
+  if (!isMobileLikeDevice()) {
+    downloadBlobFile(blob, filename);
+    return true;
+  }
+  const file = new File([blob], filename, { type: blob.type || 'image/jpeg' });
+  if (navigator.canShare?.({ files: [file] })) {
+    try {
+      await navigator.share({ files: [file], title: 'Memory photo' });
+      return true;
+    } catch (error) {
+      if (error?.name === 'AbortError') return false;
+    }
+  }
   downloadBlobFile(blob, filename);
   return true;
 }
@@ -7520,13 +7575,20 @@ function bindRecordEvents() {
     renderScreen();
   });
 
-  document.querySelector('[data-record-open-camera-input]')?.addEventListener('click', () => {
-    if (captureRecordCameraPhoto()) return;
-    document.querySelector('[data-record-camera-input]')?.click();
+  document.querySelector('[data-record-open-camera-input]')?.addEventListener('click', (event) => {
+    if (captureRecordCameraPhoto()) {
+      event.preventDefault();
+      return;
+    }
+    if (!event.currentTarget.querySelector?.('[data-record-camera-input]')) {
+      document.querySelector('[data-record-camera-input]')?.click();
+    }
   });
 
   document.querySelector('[data-record-open-album]')?.addEventListener('click', () => {
-    document.querySelector('[data-record-album-input]')?.click();
+    if (!document.querySelector('[data-record-open-album] [data-record-album-input]')) {
+      document.querySelector('[data-record-album-input]')?.click();
+    }
   });
 
   document.querySelectorAll('[data-record-camera-input], [data-record-album-input]').forEach((input) => {
@@ -7559,6 +7621,10 @@ function bindRecordEvents() {
     uiState.recordStage = 'select';
     uiState.recordSelectedIds = [saved.id];
     renderScreen();
+  });
+
+  document.querySelector('[data-record-save-photo]')?.addEventListener('click', async () => {
+    await saveRecordPhotoToDevice();
   });
 
   document.querySelectorAll('[data-record-edit-memory]').forEach((button) => {

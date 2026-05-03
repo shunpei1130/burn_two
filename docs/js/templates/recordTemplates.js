@@ -9,6 +9,12 @@ const template06 = new URL('../../references/template_for_record/template06.png'
 const background01 = new URL('../../references/record_background/back_ex1.png', import.meta.url).href;
 const background02 = new URL('../../references/record_background/back_ex2.png', import.meta.url).href;
 const background03 = new URL('../../references/record_background/back_ex3.png', import.meta.url).href;
+const background04 = new URL('../../references/record_background/back_ex4.png', import.meta.url).href;
+const background05 = new URL('../../references/record_background/back_ex5.png', import.meta.url).href;
+const background06 = new URL('../../references/record_background/back_ex6.png', import.meta.url).href;
+const background07 = new URL('../../references/record_background/back_ex7.png', import.meta.url).href;
+const background08 = new URL('../../references/record_background/back_ex8.png', import.meta.url).href;
+const background09 = new URL('../../references/record_background/back_ex9.png', import.meta.url).href;
 
 const rect = (x, y, width, height) => ({ x, y, width, height });
 
@@ -144,6 +150,12 @@ export const RECORD_BACKGROUNDS = [
   { id: 'record-background-01', label: 'Background 01', src: background01 },
   { id: 'record-background-02', label: 'Background 02', src: background02 },
   { id: 'record-background-03', label: 'Background 03', src: background03 },
+  { id: 'record-background-04', label: 'Background 04', src: background04 },
+  { id: 'record-background-05', label: 'Background 05', src: background05 },
+  { id: 'record-background-06', label: 'Background 06', src: background06 },
+  { id: 'record-background-07', label: 'Background 07', src: background07 },
+  { id: 'record-background-08', label: 'Background 08', src: background08 },
+  { id: 'record-background-09', label: 'Background 09', src: background09 },
 ];
 
 export const DEFAULT_RECORD_BACKGROUND = RECORD_BACKGROUNDS[0].id;
