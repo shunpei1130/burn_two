@@ -7575,16 +7575,12 @@ function bindRecordEvents() {
     renderScreen();
   });
 
-  document.querySelector('[data-record-open-camera-input]')?.addEventListener('click', (event) => {
-    if (captureRecordCameraPhoto()) {
-      event.preventDefault();
-      return;
-    }
+  document.querySelector('[data-record-open-camera-input]')?.addEventListener('click', () => {
+    if (captureRecordCameraPhoto()) return;
     document.querySelector('[data-record-camera-input]')?.click();
   });
 
-  document.querySelector('[data-record-open-album]')?.addEventListener('click', (event) => {
-    event.preventDefault();
+  document.querySelector('[data-record-open-album]')?.addEventListener('click', () => {
     document.querySelector('[data-record-album-input]')?.click();
   });
 
