@@ -112,6 +112,7 @@ function normalizeRecordMemory(memory) {
     time: memory.time || new Date().toTimeString().slice(0, 5),
     place: memory.place || '',
     memo: memory.memo || '',
+    frame: memory.frame === 'portrait' ? 'portrait' : 'landscape',
     pageCrop: {
       x: Math.min(1, Math.max(0, Number(memory.pageCrop?.x) || 0.5)),
       y: Math.min(1, Math.max(0, Number(memory.pageCrop?.y) || 0.5)),

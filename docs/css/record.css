@@ -861,9 +861,19 @@
   cursor: pointer;
 }
 
-.record-select-card__toggle img {
+.record-select-card__image {
   height: 126px;
-  aspect-ratio: auto;
+  justify-self: start;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.record-select-card__image--landscape {
+  aspect-ratio: 1.183;
+}
+
+.record-select-card__image--portrait {
+  aspect-ratio: 0.772;
 }
 
 .record-select-card__order {
@@ -1638,7 +1648,7 @@
     padding: 8px 10px 8px 8px;
   }
 
-  .record-select-card__toggle img {
+  .record-select-card__image {
     height: 104px;
   }
 

@@ -296,13 +296,15 @@ function renderRecordSelect(memories, selectedIds, selectedTemplateId = DEFAULT_
         ${orderedMemories.map((memory) => {
           const isSelected = selected.has(memory.id);
           const selectedIndex = orderedSelectedIds.indexOf(memory.id);
+          const frame = memory.frame === 'portrait' ? 'portrait' : 'landscape';
+          const frameLabel = frame === 'portrait' ? '縦画像' : '横画像';
           return `
             <article class="record-select-card ${isSelected ? 'is-selected' : ''}">
               <button class="record-select-card__toggle" type="button" data-record-toggle-memory="${memory.id}">
-              <img src="${memory.imageData}" alt="" />
+              <img class="record-select-card__image record-select-card__image--${frame}" src="${memory.imageData}" alt="" />
               <div class="record-select-card__copy">
                 <strong><time>${escapeHtml(memory.time)}</time><span>${getIcon('pin')} ${escapeHtml(memory.place || '場所未設定')}</span></strong>
-                <p>${escapeHtml(memory.memo || '今日の思い出')}</p>
+                <p>${escapeHtml(frameLabel)}</p>
                 ${selectedIndex === 0 ? '<em>メイン写真</em>' : ''}
               </div>
               <span class="record-select-card__check">${isSelected ? getIcon('check') : ''}</span>
