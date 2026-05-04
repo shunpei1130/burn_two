@@ -234,7 +234,7 @@ function renderRecordTemplatePicker(selectedTemplateId = DEFAULT_RECORD_TEMPLATE
         <h2>Template</h2>
         <p>Photos and text are placed automatically.</p>
       </div>
-      <div class="record-template-grid">
+      <div class="record-template-grid" data-record-template-grid>
         ${RECORD_TEMPLATES.map((template) => `
           <button class="record-template-option ${selectedTemplateId === template.id ? 'is-selected' : ''}" type="button" data-record-template="${template.id}">
             <img src="${template.src}" alt="${template.label}" />
@@ -253,7 +253,7 @@ function renderRecordBackgroundPicker(selectedBackgroundId = DEFAULT_RECORD_BACK
         <h2>Background</h2>
         <p>Choose a page texture.</p>
       </div>
-      <div class="record-background-grid">
+      <div class="record-background-grid" data-record-background-grid>
         ${RECORD_BACKGROUNDS.map((background) => `
           <button class="record-background-option ${selectedBackgroundId === background.id ? 'is-selected' : ''}" type="button" data-record-background="${background.id}">
             ${background.src

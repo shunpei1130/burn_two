@@ -21,6 +21,10 @@ const background12 = new URL('../../references/record_background/back_ex12.png',
 const background13 = new URL('../../references/record_background/back_ex13.png', import.meta.url).href;
 const background14 = new URL('../../references/record_background/back_ex14.png', import.meta.url).href;
 const background15 = new URL('../../references/record_background/back_ex15.png', import.meta.url).href;
+const background16 = new URL('../../references/record_background/back_ex16.png', import.meta.url).href;
+const backgroundGalMobby = new URL('../../references/record_background/back_ex_galmobby.png', import.meta.url).href;
+const backgroundGalPink = new URL('../../references/record_background/back_ex_galpink.png', import.meta.url).href;
+const backgroundYankiMobby = new URL('../../references/record_background/back_ex_yankimobby.png', import.meta.url).href;
 
 const rect = (x, y, width, height) => ({ x, y, width, height });
 
@@ -168,6 +172,10 @@ export const RECORD_BACKGROUNDS = [
   { id: 'record-background-13', label: 'Background 13', src: background13 },
   { id: 'record-background-14', label: 'Background 14', src: background14 },
   { id: 'record-background-15', label: 'Background 15', src: background15 },
+  { id: 'record-background-16', label: 'Background 16', src: background16 },
+  { id: 'record-background-galmobby', label: 'Gal Mobby', src: backgroundGalMobby },
+  { id: 'record-background-galpink', label: 'Gal Pink', src: backgroundGalPink },
+  { id: 'record-background-yankimobby', label: 'Yanki Mobby', src: backgroundYankiMobby },
 ];
 
 export const DEFAULT_RECORD_BACKGROUND = RECORD_BACKGROUNDS[0].id;

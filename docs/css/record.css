@@ -483,26 +483,34 @@
 }
 
 .record-camera-preview {
+  --record-camera-aspect: 1.183;
+  --record-camera-max-width: 520px;
+  --record-camera-side-space: 40px;
+  --record-camera-available-height: calc(100svh - 276px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
   position: relative;
   display: grid;
   place-items: center;
   justify-self: center;
   align-self: center;
-  width: min(calc(100% - 40px), 520px);
-  max-height: calc(100svh - 276px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  width: min(
+    calc(100% - var(--record-camera-side-space)),
+    var(--record-camera-max-width),
+    calc(var(--record-camera-available-height) * var(--record-camera-aspect))
+  );
   min-height: 0;
-  aspect-ratio: 1.183;
+  aspect-ratio: var(--record-camera-aspect);
   overflow: hidden;
   background: #efe7e0;
 }
 
 .record-camera-preview.has-photo {
-  max-height: calc(100svh - 482px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  --record-camera-available-height: calc(100svh - 482px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
 }
 
 .record-camera-preview--portrait {
-  width: min(calc(100% - 116px), 340px);
-  aspect-ratio: 0.772;
+  --record-camera-aspect: 0.772;
+  --record-camera-max-width: 340px;
+  --record-camera-side-space: 116px;
 }
 
 .record-camera-preview img {

@@ -7699,15 +7699,27 @@ function bindRecordEvents() {
 
   document.querySelectorAll('[data-record-template]').forEach((button) => {
     button.addEventListener('click', () => {
+      const grid = button.closest('[data-record-template-grid]');
+      uiState.recordTemplateScrollLeft = grid?.scrollLeft || 0;
       uiState.recordTemplateId = button.dataset.recordTemplate || DEFAULT_RECORD_TEMPLATE;
       renderScreen();
+      requestAnimationFrame(() => {
+        const nextGrid = document.querySelector('[data-record-template-grid]');
+        if (nextGrid) nextGrid.scrollLeft = uiState.recordTemplateScrollLeft || 0;
+      });
     });
   });
 
   document.querySelectorAll('[data-record-background]').forEach((button) => {
     button.addEventListener('click', () => {
+      const grid = button.closest('[data-record-background-grid]');
+      uiState.recordBackgroundScrollLeft = grid?.scrollLeft || 0;
       uiState.recordBackgroundId = button.dataset.recordBackground || DEFAULT_RECORD_BACKGROUND;
       renderScreen();
+      requestAnimationFrame(() => {
+        const nextGrid = document.querySelector('[data-record-background-grid]');
+        if (nextGrid) nextGrid.scrollLeft = uiState.recordBackgroundScrollLeft || 0;
+      });
     });
   });
 
