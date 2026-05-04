@@ -517,7 +517,7 @@ function renderShell() {
   const screenAreaClasses = ['screen-area'];
   const themeName = resolveHomeTheme();
   const isRecordCameraStage = uiState.screen === 'record' && uiState.recordStage === 'camera';
-  const hasBottomNav = ['home', 'timeline', 'search', 'record', 'profile'].includes(uiState.screen) && !isRecordCameraStage;
+  const hasBottomNav = ['home', 'timeline', 'search', 'record', 'magazine', 'profile'].includes(uiState.screen) && !isRecordCameraStage;
 
   shellClasses.push(`app-shell--theme-${themeName}`);
   shellClasses.push('app-shell--theme-mode-light');
@@ -576,9 +576,9 @@ function renderScreen() {
   const isRecordCameraStage = uiState.screen === 'record' && uiState.recordStage === 'camera';
   const shell = screenArea.closest('.app-shell');
   shell?.classList.toggle('app-shell--record-camera', isRecordCameraStage);
-  shell?.classList.toggle('app-shell--with-bottom-nav', !isRecordCameraStage && ['home', 'timeline', 'search', 'record', 'profile'].includes(uiState.screen));
+  shell?.classList.toggle('app-shell--with-bottom-nav', !isRecordCameraStage && ['home', 'timeline', 'search', 'record', 'magazine', 'profile'].includes(uiState.screen));
   screenArea.classList.toggle('screen-area--record-camera', isRecordCameraStage);
-  screenArea.classList.toggle('screen-area--with-bottom-nav', !isRecordCameraStage && ['home', 'timeline', 'search', 'record', 'profile'].includes(uiState.screen));
+  screenArea.classList.toggle('screen-area--with-bottom-nav', !isRecordCameraStage && ['home', 'timeline', 'search', 'record', 'magazine', 'profile'].includes(uiState.screen));
   if (!(uiState.screen === 'record' && uiState.recordStage === 'camera' && !uiState.recordDraft?.imageData)) {
     stopRecordCameraStream();
   }
