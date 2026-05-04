@@ -7740,7 +7740,7 @@ function bindRecordEvents() {
     uiState.recordDraft = null;
     uiState.recordStage = 'select';
     uiState.recordSelectedIds = [saved.id];
-    renderScreen();
+    render();
   });
 
   document.querySelector('[data-record-save-photo]')?.addEventListener('click', async () => {
